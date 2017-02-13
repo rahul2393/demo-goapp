@@ -3,50 +3,43 @@
 // license that can be found in the LICENSE file.
 
 // Sample helloworld is a basic App Engine flexible app.
-package main
+package demogoappcloud
 
 import (
 	"fmt"
-	"log"
+	//	"log"
 	"net/http"
-	"os"
 	"time"
 
-	"cloud.google.com/go/datastore"
+	"google.golang.org/appengine/datastore"
 
 	"golang.org/x/net/context"
 
 	"google.golang.org/appengine"
 )
 
-func main() {
+//func main() {
+//	// Set this in app.yaml when running in production.
+//	projectID := os.Getenv("GCLOUD_DATASET_ID")
+//
+//	var err error
+//	datastoreClient, err = datastore.NewClient(ctx, projectID)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	appengine.Main()
+//}
 
-	ctx := context.Background()
-
-	// Set this in app.yaml when running in production.
-	projectID := os.Getenv("GCLOUD_DATASET_ID")
-
-	var err error
-	datastoreClient, err = datastore.NewClient(ctx, projectID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func init() {
 	http.HandleFunc("/", handle)
 	http.HandleFunc("/_ah/health", healthCheckHandler)
-	log.Print("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
-	appengine.Main()
-}
 
+}
 func handle(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
 	fmt.Fprint(w, "Hello world!\n")
 
-	ctx := context.Background()
+	ctx := appengine.NewContext(r)
 
 	// Get a list of the most recent visits.
 	visits, err := queryVisits(ctx, 10)
@@ -85,9 +78,9 @@ func recordVisit(ctx context.Context, now time.Time, userIP string) error {
 		UserIP:    userIP,
 	}
 
-	k := datastore.IncompleteKey("Visit", nil)
+	k := datastore.NewIncompleteKey(ctx, "Visit", nil)
 
-	_, err := datastoreClient.Put(ctx, k, v)
+	_, err := datastore.Put(ctx, k, v)
 	return err
 }
 
@@ -98,6 +91,6 @@ func queryVisits(ctx context.Context, limit int64) ([]*visit, error) {
 		Limit(10)
 
 	visits := make([]*visit, 0)
-	_, err := datastoreClient.GetAll(ctx, q, &visits)
+	_, err := q.GetAll(ctx, &visits)
 	return visits, err
 }

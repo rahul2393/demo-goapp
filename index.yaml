@@ -1,0 +1,10 @@
+# datastore indexes for google app engine
+# https://cloud.google.com/appengine/docs/go/config/indexconfig
+
+indexes:
+
+- kind: Visit
+  properties:
+  - name: Timestamp
+  - name: UserIP
+  - name: Timestamp
