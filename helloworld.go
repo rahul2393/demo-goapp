@@ -32,7 +32,7 @@ import (
 //}
 
 func init() {
-	http.HandleFunc("/", handle)
+	http.HandleFunc("/_ah/remote_api", handle)
 	http.HandleFunc("/_ah/health", healthCheckHandler)
 
 }
