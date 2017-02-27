@@ -8,10 +8,10 @@ package demogoappcloud
 import (
 	"fmt"
 	//	"log"
+	"google.golang.org/appengine/datastore"
+	_ "google.golang.org/appengine/remote_api"
 	"net/http"
 	"time"
-
-	"google.golang.org/appengine/datastore"
 
 	"golang.org/x/net/context"
 
